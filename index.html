@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>АРБА</title>
+<style>
+  /* Обёртка страниц бота АРБА: страница бота (Google Apps Script) открывается во весь видимый экран телефона,
+     без плашки Google сверху. Высота — 100dvh: ровно видимая часть экрана, низ страницы не уходит за край. */
+  html, body { margin: 0; height: 100%; background: #f4f5f7; overflow: hidden; }
+  #app { position: fixed; top: 0; left: 0; width: 100%; height: 100%; height: 100dvh; border: 0; display: block; background: #f4f5f7; }
+  #msg { font: 15px/1.4 -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: #6b7280; text-align: center; padding: 48px 16px; }
+</style>
+</head>
+<body>
+<div id="msg">Загрузка…</div>
+<script>
+(function () {
+  // Адрес веб-приложения бота (то же развёртывание, что и в кнопках бота).
+  var EXEC = 'https://script.google.com/macros/s/AKfycbwTi6BvT4I7SQA_YP8GwGmDUu-1--jTQvzQOjpUNpKo696eRxiEsaZ2HwA8Jpn0IMUq5A/exec';
+  // Какие страницы можно открыть через обёртку. Сканер QR и «Позвонить» открываются напрямую (камера, звонок).
+  var PAGES = { shop: 'каталог', broadcasts: 'рассылки', admin: 'товары', guide: 'инструкция' };
+  var q = new URLSearchParams(location.search), page = q.get('page') || '';
+  var msg = document.getElementById('msg');
+  if (!PAGES.hasOwnProperty(page)) { msg.textContent = 'Откройте эту страницу кнопкой в боте АРБА.'; return; }
+  document.title = 'АРБА — ' + PAGES[page];
+  var f = document.createElement('iframe');
+  f.id = 'app';
+  f.title = 'АРБА — ' + PAGES[page];
+  f.setAttribute('allow', 'clipboard-write; fullscreen');
+  f.setAttribute('referrerpolicy', 'no-referrer');
+  f.onload = function () { if (msg && msg.parentNode) msg.parentNode.removeChild(msg); };
+  f.src = EXEC + location.search;   // те же параметры: страница, ID и подпись из кнопки бота
+  document.body.appendChild(f);
+})();
+</script>
+</body>
+</html>
